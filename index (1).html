@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <title>My Bot Hosting</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; padding: 24px;
+      display: grid; place-items: center;
+      background: #0f172a; color: #e5e7eb;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .card {
+      width: 100%; max-width: 440px; padding: 28px;
+      border: 1px solid #334155; border-radius: 18px;
+      background: #1e293b; box-shadow: 0 20px 55px #0005;
+    }
+    h1 { margin: 0 0 8px; text-align: center; font-size: 25px; }
+    .subtitle { margin: 0 0 24px; text-align: center; color: #94a3b8; font-size: 14px; }
+    label { display: block; margin: 16px 0 8px; color: #cbd5e1; font-size: 14px; }
+    input[type="password"], input[type="file"] {
+      width: 100%; padding: 13px; border: 1px solid #475569;
+      border-radius: 9px; background: #0f172a; color: #e5e7eb;
+    }
+    button {
+      width: 100%; margin-top: 14px; padding: 13px;
+      border: 0; border-radius: 9px; background: #2563eb;
+      color: white; font-weight: 700; cursor: pointer;
+    }
+    button:hover { filter: brightness(1.1); }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    .secondary { background: #475569; }
+    .danger { background: #b91c1c; }
+    .panel { display: none; }
+    .upload-box {
+      margin-top: 20px; padding: 18px;
+      border: 1px dashed #64748b; border-radius: 12px;
+      background: #172033;
+    }
+    .status {
+      margin-top: 18px; padding: 15px; border-radius: 10px;
+      background: #0f172a; line-height: 1.8;
+    }
+    .status strong { color: #f8fafc; }
+    .note { margin-top: 18px; color: #94a3b8; font-size: 12px; line-height: 1.5; }
+    .message { min-height: 20px; margin: 12px 0 0; color: #fbbf24; font-size: 13px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <section id="login">
+      <h1>🔐 Admin Login</h1>
+      <p class="subtitle">My Personal Telegram Bot Hosting</p>
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password">
+      <button id="loginButton" type="button">LOGIN</button>
+      <p id="loginMessage" class="message" role="status"></p>
+    </section>
+
+    <section id="dashboard" class="panel">
+      <h1>🚀 Bot Hosting Panel</h1>
+      <p class="subtitle">Personal dashboard</p>
+
+      <div class="upload-box">
+        <label for="botFile">Select your Python bot file (.py)</label>
+        <input id="botFile" type="file" accept=".py">
+        <p id="fileName" class="message">No file selected</p>
+        <button id="uploadButton" type="button" class="secondary">UPLOAD FILE</button>
+      </div>
+
+      <div class="status">
+        <div>Bot file: <strong id="currentFile">Not uploaded</strong></div>
+        <div>Bot status: <strong id="botStatus">Not connected</strong></div>
+        <div>Server: <strong>Backend not connected</strong></div>
+      </div>
+
+      <button id="startButton" type="button" disabled>START BOT</button>
+      <button id="stopButton" type="button" class="danger" disabled>STOP BOT</button>
+      <button id="logoutButton" type="button" class="secondary">LOG OUT</button>
+      <p id="panelMessage" class="message" role="status"></p>
+    </section>
+
+    <p class="note">
+      Demo interface only. GitHub Pages hosts static files; it cannot run Python bots.
+      File selection here does not upload or start a bot. A secure backend and a separate
+      always-on runtime are required for real hosting.
+    </p>
+  </main>
+
+  <script>
+    // DEMO ONLY: this password is visible to anyone who views the page source.
+    // Do not use a real or reused password here.
+    const DEMO_PASSWORD = "ChangeThisPassword123";
+
+    const loginSection = document.getElementById("login");
+    const dashboard = document.getElementById("dashboard");
+    const passwordInput = document.getElementById("password");
+    const loginMessage = document.getElementById("loginMessage");
+    const panelMessage = document.getElementById("panelMessage");
+    const botFileInput = document.getElementById("botFile");
+
+    document.getElementById("loginButton").addEventListener("click", () => {
+      if (passwordInput.value === DEMO_PASSWORD) {
+        loginSection.style.display = "none";
+        dashboard.style.display = "block";
+        loginMessage.textContent = "";
+      } else {
+        loginMessage.textContent = "Incorrect password.";
+      }
+    });
+
+    passwordInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") document.getElementById("loginButton").click();
+    });
+
+    botFileInput.addEventListener("change", () => {
+      const file = botFileInput.files[0];
+      document.getElementById("fileName").textContent =
+        file ? `Selected: ${file.name}` : "No file selected";
+    });
+
+    document.getElementById("uploadButton").addEventListener("click", () => {
+      const file = botFileInput.files[0];
+      if (!file) {
+        panelMessage.textContent = "Please select a .py file first.";
+        return;
+      }
+      if (!file.name.toLowerCase().endsWith(".py")) {
+        panelMessage.textContent = "Please choose a Python .py file.";
+        return;
+      }
+      panelMessage.textContent =
+        "File selected in this browser only. A backend is needed to upload it to a server.";
+    });
+
+    document.getElementById("logoutButton").addEventListener("click", () => {
+      dashboard.style.display = "none";
+      loginSection.style.display = "block";
+      passwordInput.value = "";
+      panelMessage.textContent = "";
+    });
+  </script>
+</body>
+</html>
